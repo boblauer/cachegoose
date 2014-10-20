@@ -1,11 +1,11 @@
 /* jshint expr: true, unused: false */
 /* global describe, it, before, after, beforeEach, afterEach */
 
-var cachegoose = require('../')
-  , cache = require('../lib/cache')
-  , should = require('should')
-  , mongoose = require('mongoose')
-  , Schema = mongoose.Schema
+var mongoose   = require('mongoose')
+  , cache      = require('../lib/cache')
+  , should     = require('should')
+  , mongoose   = require('mongoose')
+  , Schema     = mongoose.Schema
   , RecordSchema
   , Record
   , db
@@ -13,6 +13,8 @@ var cachegoose = require('../')
 
 describe('cachegoose', function() {
   before(function(done) {
+    require('../')(mongoose);
+
     mongoose.connect('mongodb://127.0.0.1/mongoose-cachegoose-testing');
     db = mongoose.connection;
 
@@ -40,7 +42,7 @@ describe('cachegoose', function() {
     });
   });
 
-  it('should have cache method', function () {
+  it('should have cache method after initialization', function () {
     Record.find({}).cache.should.be.a.Function;
   });
 
