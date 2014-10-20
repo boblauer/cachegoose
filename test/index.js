@@ -102,6 +102,22 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should distinguish between lead and non lean for the same conditions', function(done) {
+    getAll(10e3, function(err, res) {
+      getAll(10e3, function(err, res2) {
+        res2.length.should.equal(10);
+        Boolean(res2._fromCache).should.be.true;
+        res2[0].constructor.name.should.equal('model');
+
+        getAllLean(function(err, res3) {
+          Boolean(res3._fromCache).should.be.false;
+          res3[0].constructor.name.should.not.equal('model');
+          done();
+        });
+      });
+    });
+  });
+
   it('should cache a query rerun many times', function(done) {
     getAll(60e3).then(function(res) {
       res.length.should.equal(10);
