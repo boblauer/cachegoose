@@ -1,0 +1,41 @@
+{
+  "name": "cachegoose",
+  "version": "1.0.0",
+  "description": "Mongoose caching that actually works.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "mongoose": "~3.8.17",
+    "cacheman": "^1.0.3",
+    "cacheman-redis": "git+ssh://git@github.com:boblauer/cacheman-redis.git#fix-clear-fn"
+  },
+  "devDependencies": {
+    "mocha": "~1.21.5",
+    "should": "~4.0.4",
+    "async": "^0.9.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boblauer/cachegoose.git"
+  },
+  "keywords": [
+    "cache",
+    "mongo",
+    "mongodb",
+    "mongoose",
+    "redis",
+    "store",
+    "ttl"
+  ],
+  "author": "Bob Lauer <rlauer@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boblauer/cachegoose/issues"
+  },
+  "homepage": "https://github.com/boblauer/cachegoose"
+}
