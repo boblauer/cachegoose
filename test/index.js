@@ -1,19 +1,27 @@
 /* jshint expr: true, unused: false */
 /* global describe, it, before, after, beforeEach, afterEach */
 
-var mongoose   = require('mongoose')
-  , cache      = require('../lib/cache')
+var async      = require('async')
+  , mongoose   = require('mongoose')
+  , cachegoose = require('../')
   , should     = require('should')
   , mongoose   = require('mongoose')
   , Schema     = mongoose.Schema
   , RecordSchema
   , Record
+  , cache
   , db
   ;
 
 describe('cachegoose', function() {
   before(function(done) {
-    require('../')(mongoose);
+    cachegoose(mongoose, {
+      engine: 'redis',
+      port: 6379,
+      host: 'localhost'
+    });
+
+    cache = cachegoose._cache;
 
     mongoose.connect('mongodb://127.0.0.1/mongoose-cachegoose-testing');
     db = mongoose.connection;
@@ -104,7 +112,7 @@ describe('cachegoose', function() {
     });
   });
 
-  it('should distinguish between lead and non lean for the same conditions', function(done) {
+  it('should distinguish between lean and non lean for the same conditions', function(done) {
     getAll(10e3, function(err, res) {
       getAll(10e3, function(err, res2) {
         res2.length.should.equal(10);
@@ -125,67 +133,31 @@ describe('cachegoose', function() {
       res.length.should.equal(10);
       Boolean(res._fromCache).should.be.false;
 
-      getAll(60e3).then(function() {
-        getAll(60e3).then(function() {
-          getAll(60e3).then(function() {
-            getAll(60e3).then(function() {
-              getAll(60e3).then(function() {
-                getAll(60e3).then(function() {
-                  getAll(60e3).then(function() {
-                    getAll(60e3).then(function() {
-                      getAll(60e3).then(function() {
-                        getAll(60e3).then(function() {
-                          getAll(60e3).then(function() {
-                            getAll(60e3).then(function() {
-                              getAll(60e3).then(function() {
-                                getAll(60e3).then(function() {
-                                  getAll(60e3).then(function() {
-                                    getAll(60e3).then(function() {
-                                      getAll(60e3).then(function() {
-                                        getAll(60e3).then(function() {
-                                          getAll(60e3).then(function() {
-                                            getAll(60e3).then(function() {
-                                              getAll(60e3).then(function() {
-                                                getAll(60e3).then(function() {
-                                                  getAll(60e3, function(err, res) {
-                                                    res.length.should.equal(10);
-                                                    Boolean(res._fromCache).should.be.true;
-                                                    done();
-                                                  });
-                                                });
-                                              });
-                                            });
-                                          });
-                                        });
-                                      });
-                                    });
-                                  });
-                                });
-                              });
-                            });
-                          });
-                        });
-                      });
-                    });
-                  });
-                });
-              });
-            });
-          });
+      async.series(
+        new Array(20).join('.').split('').map(function() {
+          return function(done) {
+            getAll(60e3, done);
+          };
+        })
+      , function() {
+        getAll(60e3, function(err, res) {
+          res.length.should.equal(10);
+          Boolean(res._fromCache).should.be.true;
+          done();
         });
       });
     });
   });
 
   it('should expire the cache', function(done) {
-    getAll(0.1);
-
-    setTimeout(function() {
-      getAll(0.1, function(err, res) {
-        Boolean(res._fromCache).should.be.false;
-        done();
-      });
-    }, 200);
+    getAll(1, function() {
+      setTimeout(function() {
+        getAll(1, function(err, res) {
+          Boolean(res._fromCache).should.be.false;
+          done();
+        });
+      }, 1200);
+    });
   });
 });
 
