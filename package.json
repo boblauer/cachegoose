@@ -9,7 +9,7 @@
   "dependencies": {
     "mongoose": "~3.8.17",
     "cacheman": "^1.0.3",
-    "cacheman-redis": "git+ssh://git@github.com:boblauer/cacheman-redis.git#fix-clear-fn"
+    "cacheman-redis": "boblauer/cacheman-redis"
   },
   "devDependencies": {
     "mocha": "~1.21.5",
