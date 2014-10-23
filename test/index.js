@@ -15,11 +15,7 @@ var async      = require('async')
 
 describe('cachegoose', function() {
   before(function(done) {
-    cachegoose(mongoose, {
-      engine: 'redis',
-      port: 6379,
-      host: 'localhost'
-    });
+    cachegoose(mongoose);
 
     cache = cachegoose._cache;
 
