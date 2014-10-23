@@ -80,6 +80,15 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should not cache the same query w/out a ttl defined', function(done) {
+    getAll(60e3).then(function(res) {
+      getAllNoCache(function(err, res) {
+        Boolean(res._fromCache).should.be.false;
+        done();
+      });
+    });
+  });
+
   it('should return a Mongoose model from cached and non-cached results', function(done) {
     getAll(60e3, function(err, res) {
       var first = res[0];
@@ -163,6 +172,10 @@ describe('cachegoose', function() {
 
 function getAll(ttl, cb) {
   return Record.find({}).cache(ttl).exec(cb);
+}
+
+function getAllNoCache(cb) {
+  return Record.find({}).exec(cb);
 }
 
 function getAllLean(ttl, cb) {
