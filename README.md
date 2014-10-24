@@ -22,13 +22,13 @@ cachegoose(mongoose, {
 
 Record
   .find({ some_condition: true })
-  .ttl(30) // The number of seconds to cache the query in Redis.  Defaults to 1 minute.
+  .cache(30) // The number of seconds to cache the query in Redis.  Defaults to 1 minute.
   .exec(function(err, records) {
     ...
   });
 ```
 
-That's pretty much it.  Just insert `.ttl()` into the queries you want to cache, and they will be cached.  Works with `select`, `lean`, `sort`, and anything else that will modify the results of a query.
+That's pretty much it.  Just insert `.cache()` into the queries you want to cache, and they will be cached.  Works with `select`, `lean`, `sort`, and anything else that will modify the results of a query.
 
 ##Test
 npm test
