@@ -133,6 +133,18 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should cache a findOne query', function(done) {
+    getOne(10e3, function(err, res) {
+      res.constructor.name.should.equal('model');
+
+      getOne(10e3, function(err, res2) {
+        res2.constructor.name.should.equal('model');
+        Boolean(res2._fromCache).should.be.true;
+        done();
+      });
+    });
+  });
+
   it('should cache a query rerun many times', function(done) {
     getAll(60e3).then(function(res) {
       res.length.should.equal(10);
@@ -176,6 +188,10 @@ function getAllNoCache(cb) {
 
 function getAllLean(ttl, cb) {
   return Record.find({}).lean().cache(ttl).exec(cb);
+}
+
+function getOne(ttl, cb) {
+  return Record.findOne({ num: { $gt: 2 } }).cache(ttl).exec(cb);
 }
 
 function generate (amount, cb) {
