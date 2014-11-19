@@ -133,6 +133,42 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should correctly cache queries using skip', function(done) {
+    getWithSkip(1, 10e3, function(err, res) {
+      Boolean(res._fromCache).should.be.false;
+      res.length.should.equal(9);
+
+      getWithSkip(1, 10e3, function(err, res2) {
+        Boolean(res2._fromCache).should.be.true;
+        res2.length.should.equal(9);
+
+        getWithSkip(2, 10e3, function(err, res3) {
+          Boolean(res3._fromCache).should.be.false;
+          res3.length.should.equal(8);
+          done();
+        });
+      });
+    });
+  });
+
+  it('should correctly cache queries using limit', function(done) {
+    getWithLimit(5, 10e3, function(err, res) {
+      Boolean(res._fromCache).should.be.false;
+      res.length.should.equal(5);
+
+      getWithLimit(5, 10e3, function(err, res2) {
+        Boolean(res2._fromCache).should.be.true;
+        res2.length.should.equal(5);
+
+        getWithLimit(4, 10e3, function(err, res3) {
+          Boolean(res3._fromCache).should.be.false;
+          res3.length.should.equal(4);
+          done();
+        });
+      });
+    });
+  });
+
   it('should cache a findOne query', function(done) {
     getOne(10e3, function(err, res) {
       res.constructor.name.should.equal('model');
@@ -194,6 +230,14 @@ function getOne(ttl, cb) {
   return Record.findOne({ num: { $gt: 2 } }).cache(ttl).exec(cb);
 }
 
+function getWithSkip(skip, ttl, cb) {
+  return Record.find({}).skip(skip).cache(ttl).exec(cb);
+}
+
+function getWithLimit(limit, ttl, cb) {
+  return Record.find({}).limit(limit).cache(ttl).exec(cb);
+}
+
 function generate (amount, cb) {
   var records = [];
   var count = 0;
@@ -206,4 +250,3 @@ function generate (amount, cb) {
 
   Record.create(records, cb);
 }
-
