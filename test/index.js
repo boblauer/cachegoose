@@ -117,6 +117,19 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should cache a query that returns no results', function(done) {
+    getNone(10e3, function(err, res) {
+      res.length.should.equal(0);
+      Boolean(res._fromCache).should.be.false;
+
+      getNone(10e3, function(err, res2) {
+        res2.length.should.equal(0);
+        Boolean(res2._fromCache).should.be.true;
+        done();
+      });
+    });
+  });
+
   it('should distinguish between lean and non lean for the same conditions', function(done) {
     getAll(10e3, function(err, res) {
       getAll(10e3, function(err, res2) {
@@ -236,6 +249,10 @@ function getWithSkip(skip, ttl, cb) {
 
 function getWithLimit(limit, ttl, cb) {
   return Record.find({}).limit(limit).cache(ttl).exec(cb);
+}
+
+function getNone(ttl, cb) {
+  return Record.find({ notFound: true }).cache(ttl).exec(cb);
 }
 
 function generate (amount, cb) {
