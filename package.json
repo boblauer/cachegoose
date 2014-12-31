@@ -8,8 +8,7 @@
   },
   "dependencies": {
     "cacheman": "^1.0.3",
-    "cacheman-redis": "boblauer/cacheman-redis",
-    "mongoose": "~3.8.17"
+    "cacheman-redis": "boblauer/cacheman-redis"
   },
   "devDependencies": {
     "async": "^0.9.0",
