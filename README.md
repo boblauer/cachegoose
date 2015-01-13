@@ -6,7 +6,7 @@
 
 ##About
 
-While looking for a Mongoose caching solution, I grew tired of packages that didn't work with the latest version of Mongoose, or that returned POJO's instead of Mongoose models.  This inspired me to write cachegoose, A Mongoose caching module that works exactly how you would expect it to, with the latest version of Mongoose.
+A Mongoose caching module that works exactly how you would expect it to, with the latest version of Mongoose.
 
 ##Usage
 
@@ -24,6 +24,14 @@ Record
   .find({ some_condition: true })
   .cache(30) // The number of seconds to cache the query.  Defaults to 60 seconds.
   .exec(function(err, records) {
+    ...
+  });
+
+Record
+  .aggregate()
+  .group({ total: { $sum: '$some_field' } })
+  .cache(30) // The number of seconds to cache the query.  Defaults to 60 seconds.
+  .exec(function(err, aggResults) {
     ...
   });
 ```
