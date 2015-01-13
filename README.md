@@ -22,7 +22,7 @@ cachegoose(mongoose, {
 
 Record
   .find({ some_condition: true })
-  .cache(30) // The number of seconds to cache the query in Redis.  Defaults to 1 minute.
+  .cache(30) // The number of seconds to cache the query.  Defaults to 60 seconds.
   .exec(function(err, records) {
     ...
   });
