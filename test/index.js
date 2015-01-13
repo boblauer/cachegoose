@@ -225,6 +225,16 @@ describe('cachegoose', function() {
       }, 1200);
     });
   });
+
+  it('should cache aggregate queries', function(done) {
+    aggregate(60e3, function(err, res) {
+      Boolean(res._fromCache).should.be.false;
+      aggregate(60e3, function(err, res2) {
+        Boolean(res2._fromCache).should.be.true;
+        done();
+      });
+    });
+  });
 });
 
 function getAll(ttl, cb) {
@@ -253,6 +263,13 @@ function getWithLimit(limit, ttl, cb) {
 
 function getNone(ttl, cb) {
   return Record.find({ notFound: true }).cache(ttl).exec(cb);
+}
+
+function aggregate(ttl, cb) {
+  return Record.aggregate()
+    .group({ _id: null, total: { $sum: '$num' } })
+    .cache(ttl)
+    .exec(cb);
 }
 
 function generate (amount, cb) {
