@@ -42,11 +42,11 @@ module.exports = function(mongoose, cache) {
       return promise;
     };
 
-    Aggregate.prototype.cache = function(ttl) {
+    Aggregate.prototype.cache = function(ttl = 60) {
       if (ttl === false) {
         cache.del(this.getCacheKey());
       } else {
-        this._ttl = ttl || 60;
+        this._ttl = ttl;
       }
 
       return this;
