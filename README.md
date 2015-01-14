@@ -15,8 +15,8 @@ var mongoose = require('mongoose');
 var cachegoose = require('cachegoose');
 
 cachegoose(mongoose, {
-  engine: 'redis',    // If you don't specify the redis engine,
-  port: 6379,         // the query results will be cached in memory.
+  engine: 'redis',    /* If you don't specify the redis engine,      */
+  port: 6379,         /* the query results will be cached in memory. */
   host: 'localhost'
 });
 
@@ -43,8 +43,8 @@ var mongoose = require('mongoose');
 var cachegoose = require('cachegoose');
 
 cachegoose(mongoose, {
-  engine: 'redis',    /* If you don't specify the redis engine,      */
-  port: 6379,         /* the query results will be cached in memory. */
+  engine: 'redis',
+  port: 6379,
   host: 'localhost'
 });
 
