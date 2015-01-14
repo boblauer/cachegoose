@@ -235,10 +235,28 @@ describe('cachegoose', function() {
       });
     });
   });
+
+  it('should clear a custom cache key', function(done) {
+    getAllCustomKey(60, 'custom-key', function(err, res) {
+      Boolean(res._fromCache).should.be.false;
+      getAllCustomKey(60, 'custom-key', function(err, res2) {
+        Boolean(res2._fromCache).should.be.true;
+        cachegoose.clearCache('custom-key');
+        getAllCustomKey(60, 'custom-key', function(err, res3) {
+          Boolean(res3._fromCache).should.be.false;
+          done();
+        });
+      });
+    });
+  });
 });
 
 function getAll(ttl, cb) {
   return Record.find({}).cache(ttl).exec(cb);
+}
+
+function getAllCustomKey(ttl, key, cb) {
+  return Record.find({}).cache(ttl, key).exec(cb);
 }
 
 function getAllNoCache(cb) {
