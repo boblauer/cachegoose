@@ -1,4 +1,5 @@
 let Cacheman = require('cacheman')
+  , prefix   = 'cachegoose:'
   , noop     = function() { }
   ;
 
@@ -7,15 +8,15 @@ function Cache(options) {
 }
 
 Cache.prototype.get = function(key, cb = noop) {
-  return this._cache.get(key, cb);
+  return this._cache.get(prefix + key, cb);
 };
 
 Cache.prototype.set = function(key, value, ttl, cb = noop) {
-  return this._cache.set(key, value, ttl, cb);
+  return this._cache.set(prefix + key, value, ttl, cb);
 };
 
 Cache.prototype.del = function(key, cb = noop) {
-  return this._cache.del(key, cb);
+  return this._cache.del(prefix + key, cb);
 };
 
 Cache.prototype.clear = function(cb = noop) {
