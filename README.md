@@ -43,8 +43,8 @@ var mongoose = require('mongoose');
 var cachegoose = require('cachegoose');
 
 cachegoose(mongoose, {
-  engine: 'redis',    // If you don't specify the redis engine,
-  port: 6379,         // the query results will be cached in memory.
+  engine: 'redis',    /* If you don't specify the redis engine,      */
+  port: 6379,         /* the query results will be cached in memory. */
   host: 'localhost'
 });
 
@@ -52,13 +52,14 @@ var userId = '1234567890';
 
 Children
   .find({ parentId: userId })
-  .cache(0, userId + '-children') // Will create a redis entry with the key '1234567890-children'
-  .exec(function(err, records) {
+  .cache(0, userId + '-children') /* Will create a redis entry          */
+  .exec(function(err, records) {  /* with the key '1234567890-children' */
     ...
   });
 
 ChildrenSchema.post('save', function(child) {
-  cachegoose.clearCache(child.parentId + '-children'); // Clear the parent's cache, since a new child has been added.
+  // Clear the parent's cache, since a new child has been added.
+  cachegoose.clearCache(child.parentId + '-children');
 });
 ```
 
