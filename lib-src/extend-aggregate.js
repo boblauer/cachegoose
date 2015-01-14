@@ -1,12 +1,10 @@
-'use strict';
-
-var hasBeenExtended = false;
+let hasBeenExtended = false;
 
 module.exports = function(mongoose, cache) {
-  var aggregate = mongoose.Model.aggregate;
+  let aggregate = mongoose.Model.aggregate;
 
   mongoose.Model.aggregate = function() {
-    var res = aggregate.apply(this, arguments);
+    let res = aggregate.apply(this, arguments);
 
     if (!hasBeenExtended && res.constructor && res.constructor.name === 'Aggregate') {
       extend(res.constructor);
@@ -17,25 +15,24 @@ module.exports = function(mongoose, cache) {
   };
 
   function extend(Aggregate) {
-    var exec = Aggregate.prototype.exec;
+    let exec = Aggregate.prototype.exec;
 
     Aggregate.prototype.exec = function(callback) {
-      var self    = this
-        , key     = this.getCacheKey()
+      let key     = this.getCacheKey()
         , ttl     = this._ttl
         , promise = new mongoose.Promise()
         ;
 
       promise.onResolve(callback);
 
-      cache.get(key, function(err, cachedResults) {
+      cache.get(key, (err, cachedResults) => {
         if (cachedResults) {
           cachedResults._fromCache = true;
           promise.resolve(null, cachedResults);
         } else {
-          exec.call(self).onResolve(function(err, results) {
+          exec.call(this).onResolve((err, results) => {
             if (err) return promise.resolve(err);
-            cache.set(key, results, ttl, function() {
+            cache.set(key, results, ttl, () => {
               promise.resolve(null, results);
             });
           });

@@ -1,9 +1,7 @@
-'use strict';
-
 module.exports = function(mongoose, cache) {
-  var exec = mongoose.Query.prototype.exec;
+  let exec = mongoose.Query.prototype.exec;
 
-  mongoose.Query.prototype.exec = function(op, callback) {
+  mongoose.Query.prototype.exec = function(op, callback = function() { }) {
     if (!this._ttl) return exec.apply(this, arguments);
 
     if (typeof op === 'function') {
@@ -13,10 +11,7 @@ module.exports = function(mongoose, cache) {
       this.op = op;
     }
 
-    callback = callback || function() { };
-
-    var self    = this
-      , key     = this.getCacheKey()
+    let key     = this.getCacheKey()
       , ttl     = this._ttl
       , isLean  = this._mongooseOptions.lean
       , model   = this.model.modelName
@@ -25,10 +20,10 @@ module.exports = function(mongoose, cache) {
 
     promise.onResolve(callback);
 
-    cache.get(key, function(err, cachedResults) {
+    cache.get(key, (err, cachedResults) => {
       if (cachedResults) {
         if (!isLean) {
-          var constructor = mongoose.model(model);
+          let constructor = mongoose.model(model);
           cachedResults = Array.isArray(cachedResults) ?
             cachedResults.map(inflateModel(constructor)) :
             inflateModel(constructor)(cachedResults);
@@ -37,9 +32,9 @@ module.exports = function(mongoose, cache) {
         cachedResults._fromCache = true;
         promise.resolve(null, cachedResults);
       } else {
-        exec.call(self).onResolve(function(err, results) {
+        exec.call(this).onResolve((err, results) => {
           if (err) return promise.resolve(err);
-          cache.set(key, results, ttl, function() {
+          cache.set(key, results, ttl, () => {
             promise.resolve(null, results);
           });
         });
@@ -49,11 +44,11 @@ module.exports = function(mongoose, cache) {
     return promise;
   };
 
-  mongoose.Query.prototype.cache = function(ttl) {
+  mongoose.Query.prototype.cache = function(ttl = 60) {
     if (ttl === false) {
       cache.del(this.getCacheKey());
     } else {
-      this._ttl = ttl || 60;
+      this._ttl = ttl;
     }
 
     return this;
@@ -75,11 +70,11 @@ module.exports = function(mongoose, cache) {
 };
 
 function inflateModel(constructor) {
-  return function(data) {
+  return (data) => {
     if (constructor.inflate) {
       return constructor.inflate(data);
     } else {
-      var model = constructor(data);
+      let model = constructor(data);
       model.$__reset();
       model.isNew = false;
       return model;

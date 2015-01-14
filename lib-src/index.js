@@ -1,6 +1,4 @@
-'use strict';
-
-var hasRun = false
+let hasRun = false
   , cache
   ;
 

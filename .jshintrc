@@ -14,5 +14,6 @@
   "laxcomma": true,
   "node": true,
   "newcap": false,
-  "eqnull": true
+  "eqnull": true,
+  "esnext": true
 }
