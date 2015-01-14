@@ -11,7 +11,7 @@ module.exports = function(mongoose, cache) {
       this.op = op;
     }
 
-    let key     = this.getCacheKey()
+    let key     = this._key || this.getCacheKey()
       , ttl     = this._ttl
       , isLean  = this._mongooseOptions.lean
       , model   = this.model.modelName

@@ -18,7 +18,7 @@ module.exports = function(mongoose, cache) {
     let exec = Aggregate.prototype.exec;
 
     Aggregate.prototype.exec = function(callback) {
-      let key     = this.getCacheKey()
+      let key     = this._key || this.getCacheKey()
         , ttl     = this._ttl
         , promise = new mongoose.Promise()
         ;
