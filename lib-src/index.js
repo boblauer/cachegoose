@@ -12,3 +12,8 @@ module.exports = function init(mongoose, cacheOptions) {
   require('./extend-query')(mongoose, cache);
   require('./extend-aggregate')(mongoose, cache);
 };
+
+module.exports.clearCache = function(customKey, cb = function() { }) {
+  if (!customKey) return cb();
+  cache.del(customKey, cb);
+};
