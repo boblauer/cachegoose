@@ -44,13 +44,14 @@ module.exports = function(mongoose, cache) {
     return promise;
   };
 
-  mongoose.Query.prototype.cache = function(ttl = 60) {
-    if (ttl === false) {
-      cache.del(this.getCacheKey());
-    } else {
-      this._ttl = ttl;
+  mongoose.Query.prototype.cache = function(ttl = 60, customKey = '') {
+    if (typeof ttl === 'string') {
+      customKey = ttl;
+      ttl = 60;
     }
 
+    this._ttl = ttl;
+    this._key = customKey;
     return this;
   };
 
