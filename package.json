@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "cacheman": "^1.0.3",
-    "cacheman-redis": "boblauer/cacheman-redis"
+    "cacheman-redis": "boblauer/cacheman-redis",
+    "jsosort": "0.0.0",
+    "sha1": "^1.1.0"
   },
   "devDependencies": {
     "async": "^0.9.0",

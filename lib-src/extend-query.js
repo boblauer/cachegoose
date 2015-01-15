@@ -1,3 +1,7 @@
+let jsosort = require('jsosort')
+  , sha1    = require('sha1')
+  ;
+
 module.exports = function(mongoose, cache) {
   let exec = mongoose.Query.prototype.exec;
 
@@ -56,7 +60,7 @@ module.exports = function(mongoose, cache) {
   };
 
   mongoose.Query.prototype.getCacheKey = function() {
-    return JSON.stringify({
+    let key = {
       model: this.model.modelName,
       op: this.op,
       skip: this.options.skip,
@@ -65,8 +69,12 @@ module.exports = function(mongoose, cache) {
       _conditions: this._conditions,
       _fields: this._fields,
       _path: this._path,
-      _distinct: this._distinct,
-    });
+      _distinct: this._distinct
+    };
+
+    key = jsosort(key);
+    key = JSON.stringify(key);
+    return sha1(key);
   };
 };
 

@@ -182,6 +182,16 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should correctly cache the same query with different condition orders', function(done) {
+    getWithUnorderedQuery(10, function(err, res) {
+      Boolean(res._fromCache).should.be.false;
+      getWithUnorderedQuery(10, function(err, res2) {
+        Boolean(res2._fromCache).should.be.true;
+        done();
+      });
+    });
+  });
+
   it('should cache a findOne query', function(done) {
     getOne(10, function(err, res) {
       res.constructor.name.should.equal('model');
@@ -281,6 +291,16 @@ function getWithLimit(limit, ttl, cb) {
 
 function getNone(ttl, cb) {
   return Record.find({ notFound: true }).cache(ttl).exec(cb);
+}
+
+var flag = true;
+function getWithUnorderedQuery(ttl, cb) {
+  flag = !flag;
+  if (flag) {
+    return Record.find({ a: true, b: false }).cache(ttl).exec(cb);
+  } else {
+    return Record.find({ b: false, a: true }).cache(ttl).exec(cb);
+  }
 }
 
 function aggregate(ttl, cb) {
