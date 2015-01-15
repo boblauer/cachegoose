@@ -15,7 +15,7 @@ var async      = require('async')
 
 describe('cachegoose', function() {
   before(function(done) {
-    cachegoose(mongoose);
+    cachegoose(mongoose, {}, true);
 
     cache = cachegoose._cache;
 

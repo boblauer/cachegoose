@@ -2,7 +2,7 @@ let jsosort = require('jsosort')
   , sha1    = require('sha1')
   ;
 
-module.exports = function(mongoose, cache) {
+module.exports = function(mongoose, cache, debug) {
   let exec = mongoose.Query.prototype.exec;
 
   mongoose.Query.prototype.exec = function(op, callback = function() { }) {
@@ -33,7 +33,7 @@ module.exports = function(mongoose, cache) {
             inflateModel(constructor)(cachedResults);
         }
 
-        cachedResults._fromCache = true;
+        if (debug) cachedResults._fromCache = true;
         promise.resolve(null, cachedResults);
       } else {
         exec.call(this).onResolve((err, results) => {

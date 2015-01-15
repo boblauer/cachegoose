@@ -3,7 +3,7 @@ let jsosort         = require('jsosort')
   , hasBeenExtended = false
   ;
 
-module.exports = function(mongoose, cache) {
+module.exports = function(mongoose, cache, debug) {
   let aggregate = mongoose.Model.aggregate;
 
   mongoose.Model.aggregate = function() {
@@ -32,7 +32,7 @@ module.exports = function(mongoose, cache) {
 
       cache.get(key, (err, cachedResults) => {
         if (cachedResults) {
-          cachedResults._fromCache = true;
+          if (debug) cachedResults._fromCache = true;
           promise.resolve(null, cachedResults);
         } else {
           exec.call(this).onResolve((err, results) => {
