@@ -1,14 +1,14 @@
-#cachegoose
+# cachegoose #
 
-####Mongoose caching that actually works.
+#### Mongoose caching that actually works. ####
 
 [![Build Status](https://travis-ci.org/boblauer/cachegoose.svg)](https://travis-ci.org/boblauer/cachegoose)
 
-##About
+## About ##
 
 A Mongoose caching module that works exactly how you would expect it to, with the latest version of Mongoose.
 
-##Usage
+## Usage ##
 
 ```javascript
 var mongoose = require('mongoose');
@@ -65,5 +65,5 @@ ChildrenSchema.post('save', function(child) {
 
 That's pretty much it.  Just insert `.cache()` into the queries you want to cache, and they will be cached.  Works with `select`, `lean`, `sort`, and anything else that will modify the results of a query.
 
-##Test
+## Test ##
 npm test
