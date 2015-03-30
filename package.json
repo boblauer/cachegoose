@@ -1,6 +1,6 @@
 {
   "name": "cachegoose",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Mongoose caching that actually works.",
   "main": "index.js",
   "directories": {
@@ -21,7 +21,8 @@
   },
   "scripts": {
     "test": "npm run build && mocha",
-    "build": "6to5 lib-src --out-dir lib"
+    "build": "6to5 lib-src --out-dir lib",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
