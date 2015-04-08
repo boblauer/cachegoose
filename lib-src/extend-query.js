@@ -1,6 +1,4 @@
-let jsosort = require('jsosort')
-  , sha1    = require('sha1')
-  ;
+let generateKey = require('./generate-key');
 
 module.exports = function(mongoose, cache, debug) {
   let exec = mongoose.Query.prototype.exec;
@@ -72,9 +70,7 @@ module.exports = function(mongoose, cache, debug) {
       _distinct: this._distinct
     };
 
-    key = jsosort(key);
-    key = JSON.stringify(key);
-    return sha1(key);
+    return generateKey(key);
   };
 };
 

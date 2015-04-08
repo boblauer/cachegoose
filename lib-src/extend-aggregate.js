@@ -1,5 +1,4 @@
-let jsosort         = require('jsosort')
-  , sha1            = require('sha1')
+let generateKey     = require('./generate-key')
   , hasBeenExtended = false
   ;
 
@@ -59,9 +58,7 @@ module.exports = function(mongoose, cache, debug) {
     };
 
     Aggregate.prototype.getCacheKey = function() {
-      let key = jsosort(this._pipeline);
-      key = JSON.stringify(key);
-      return sha1(key);
+      return generateKey(this._pipeline);
     };
   }
 };
