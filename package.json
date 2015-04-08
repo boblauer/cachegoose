@@ -7,8 +7,8 @@
     "test": "test"
   },
   "dependencies": {
-    "cacheman": "^1.0.3",
-    "cacheman-redis": "boblauer/cacheman-redis",
+    "cacheman": "^1.1.0",
+    "cacheman-redis": "^0.2.0",
     "jsosort": "0.0.0",
     "sha1": "^1.1.0"
   },
