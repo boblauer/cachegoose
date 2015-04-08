@@ -27,6 +27,7 @@ describe('cachegoose', function() {
 
     RecordSchema = new Schema({
       num: Number,
+      str: String,
       date: {
         type: Date,
         default: Date.now
@@ -204,6 +205,21 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should cache a regex condition properly', function(done){
+    getAllWithRegex(10, function(err, res) {
+      Boolean(res._fromCache).should.be.false;
+
+      getAllWithRegex(10, function(err, res) {
+        Boolean(res._fromCache).should.be.true;
+
+        getNoneWithRegex(10, function(err, res) {
+          Boolean(res._fromCache).should.be.false;
+          done();
+        });
+      });
+    });
+  });
+
   it('should cache a query rerun many times', function(done) {
     getAll(60).then(function(res) {
       res.length.should.equal(10);
@@ -293,6 +309,14 @@ function getNone(ttl, cb) {
   return Record.find({ notFound: true }).cache(ttl).exec(cb);
 }
 
+function getAllWithRegex(ttl, cb) {
+  return Record.find({ str: { $regex: /\d/ } }).cache(ttl).exec(cb);
+}
+
+function getNoneWithRegex(ttl, cb) {
+  return Record.find({ str: { $regex: /\d\d/ } }).cache(ttl).exec(cb);
+}
+
 var flag = true;
 function getWithUnorderedQuery(ttl, cb) {
   flag = !flag;
@@ -315,7 +339,8 @@ function generate (amount, cb) {
   var count = 0;
   while (count < amount) {
     records.push({
-      num: count
+      num: count,
+      str: count.toString()
     });
     count++;
   }
