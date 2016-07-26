@@ -17,33 +17,38 @@ module.exports = function(mongoose, cache, debug) {
       , ttl     = this._ttl
       , isLean  = this._mongooseOptions.lean
       , model   = this.model.modelName
-      , promise = new mongoose.Promise()
+      , Promise = mongoose.Promise
       ;
 
-    promise.onResolve(callback);
+    return new Promise.ES6((resolve, reject) => {
+      cache.get(key, (err, cachedResults) => {
+        if (cachedResults) {
+          if (!isLean) {
+            let constructor = mongoose.model(model);
+            cachedResults = Array.isArray(cachedResults) ?
+              cachedResults.map(inflateModel(constructor)) :
+              inflateModel(constructor)(cachedResults);
+          }
 
-    cache.get(key, (err, cachedResults) => {
-      if (cachedResults) {
-        if (!isLean) {
-          let constructor = mongoose.model(model);
-          cachedResults = Array.isArray(cachedResults) ?
-            cachedResults.map(inflateModel(constructor)) :
-            inflateModel(constructor)(cachedResults);
+          if (debug) cachedResults._fromCache = true;
+          callback(null, cachedResults);
+          return resolve(cachedResults);
         }
 
-        if (debug) cachedResults._fromCache = true;
-        promise.resolve(null, cachedResults);
-      } else {
-        exec.call(this).onResolve((err, results) => {
-          if (err) return promise.resolve(err);
-          cache.set(key, results, ttl, () => {
-            promise.resolve(null, results);
+        exec
+          .call(this)
+          .then(results => {
+            cache.set(key, results, ttl, () => {
+              callback(null, results);
+              return resolve(results);
+            })
+          })
+          .catch(err => {
+            callback(err);
+            reject(err);
           });
-        });
-      }
+      });
     });
-
-    return promise;
   };
 
   mongoose.Query.prototype.cache = function(ttl = 60, customKey = '') {
