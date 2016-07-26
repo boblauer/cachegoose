@@ -13,6 +13,8 @@ var async      = require('async')
   , db
   ;
 
+mongoose.Promise = global.Promise;
+
 describe('cachegoose', function() {
   before(function(done) {
     cachegoose(mongoose, {}, true);
