@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "cacheman": "^2.0.5",
-    "cacheman-redis": "^0.2.0",
+    "cacheman-redis": "^1.0.1",
     "jsosort": "0.0.0",
     "sha1": "^1.1.0"
   },
