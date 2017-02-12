@@ -37,6 +37,10 @@ describe('cachegoose', function() {
     Record = mongoose.model('Record', RecordSchema);
   });
 
+  after(function (done) {
+      mongoose.disconnect(done);
+  });
+
   beforeEach(function(done) {
     generate(10, done);
   });

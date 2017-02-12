@@ -2,7 +2,7 @@ let generateKey     = require('./generate-key')
   , hasBeenExtended = false
   ;
 
-module.exports = function(mongoose, cache, debug) {
+module.exports = function(cacheOptions, mongoose, cache, debug) {
   let aggregate = mongoose.Model.aggregate;
 
   mongoose.Model.aggregate = function() {
@@ -38,6 +38,12 @@ module.exports = function(mongoose, cache, debug) {
           exec
             .call(this)
             .then(results => {
+                // Optionally ignore empty results
+                if (!cacheOptions.cacheEmpty && !results || (Array.isArray(results) && results.length === 0)) {
+                    callback(null, results);
+                    return resolve(results);
+                }
+
               cache.set(key, results, ttl, () => {
                 callback(null, results);
                 resolve(results);
