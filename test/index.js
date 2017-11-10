@@ -252,10 +252,10 @@ describe('cachegoose', function() {
     });
   });
 
-  it('should cache aggregate queries', function(done) {
-    aggregate(60, function(err, res) {
+  it('should cache aggregate queries', function (done) {
+    aggregate(60, function (err, res) {
       Boolean(res._fromCache).should.be.false;
-      aggregate(60, function(err, res2) {
+      aggregate(60, function (err, res2) {
         Boolean(res2._fromCache).should.be.true;
         done();
       });
