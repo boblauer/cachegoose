@@ -24,7 +24,7 @@
   },
   "scripts": {
     "test": "npm run build && mocha",
-    "build": "babel lib-src --out-dir lib",
+    "build": "babel lib-src --out-dir out",
     "prepublish": "npm run build"
   },
   "repository": {
