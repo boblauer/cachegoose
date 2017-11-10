@@ -262,6 +262,21 @@ describe('cachegoose', function() {
     });
   });
 
+  it('should cache aggregate queries that use Promises', function (done) {
+    aggregate(60)
+      .then((res) => {
+        Boolean(res._fromCache).should.be.false;
+      })
+      .then(() => {
+        return aggregate(60);
+      })
+      .then((res) => {
+        Boolean(res._fromCache).should.be.true;
+      })
+      .then(() => done())
+      .catch(done);
+  });
+
   it('should clear a custom cache key', function(done) {
     getAllCustomKey(60, 'custom-key', function(err, res) {
       Boolean(res._fromCache).should.be.false;
