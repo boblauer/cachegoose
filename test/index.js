@@ -2,7 +2,6 @@
 
 require('should');
 
-const async = require('async');
 const mongoose = require('mongoose');
 const cachegoose = require('../');
 const Schema = mongoose.Schema;
@@ -14,7 +13,7 @@ let db;
 
 describe('cachegoose', () => {
   before((done) => {
-    cachegoose(mongoose, {}, true);
+    cachegoose(mongoose);
 
     cache = cachegoose._cache;
 
@@ -36,8 +35,8 @@ describe('cachegoose', () => {
     Record = mongoose.model('Record', RecordSchema);
   });
 
-  beforeEach((done) => {
-    generate(10, done);
+  beforeEach(() => {
+    return generate(10);
   });
 
   afterEach((done) => {
@@ -52,44 +51,48 @@ describe('cachegoose', () => {
 
   it('should cache a simple query that uses callbacks', (done) => {
     getAll(60, (err, res) => {
-      res.length.should.equal(10);
-      Boolean(res._fromCache).should.be.false;
+      if (err) return done(err);
 
-      getAll(60, (err, res) => {
-        res.length.should.equal(10);
-        Boolean(res._fromCache).should.be.true;
-        done();
+      res.length.should.equal(10);
+
+      generate(10).then(() => {
+        getAll(60, (err, res) => {
+          if (err) return done(err);
+          res.length.should.equal(10);
+          done();
+        });
       });
     });
   });
 
-  it('should cache a simple query that uses promises', (done) => {
-    getAll(60).then((res) => {
-      res.length.should.equal(10);
-      Boolean(res._fromCache).should.be.false;
+  it('should cache a simple query that uses promises', async () => {
+    const res = await getAll(60);
+    res.length.should.equal(10);
 
-      getAll(60).then((res) => {
-        res.length.should.equal(10);
-        Boolean(res._fromCache).should.be.true;
-        done();
-      });
-    });
+    await generate(10);
+    const cachedRes = await getAll(60);
+    cachedRes.length.should.equal(10);
   });
 
-  it('should not cache the same query w/out a ttl defined', (done) => {
-    getAll(60).then((res) => {
-      getAllNoCache((err, res) => {
-        Boolean(res._fromCache).should.be.false;
-        done();
-      });
-    });
+  it('should not cache the same query w/out a ttl defined', async () => {
+    const res = await getAll(60);
+    res.length.should.equal(10);
+
+    await generate(10);
+
+    const nonCachedResponse = await getAllNoCache();
+    nonCachedResponse.length.should.equal(20);
   });
 
   it('should return a Mongoose model from cached and non-cached results', (done) => {
     getAll(60, (err, res) => {
+      if (err) return done(err);
+
       const first = res[0];
 
-      getAll(60, (err2, res2) => {
+      getAll(60, (err, res2) => {
+        if (err) return done(err);
+
         const cachedFirst = res2[0];
         first.constructor.name.should.equal('model');
         cachedFirst.constructor.name.should.equal('model');
@@ -102,148 +105,121 @@ describe('cachegoose', () => {
     });
   });
 
-  it('should return lean models from cached and non-cached results', (done) => {
-    getAllLean(10, (err, res) => {
-      res.length.should.equal(10);
-      Boolean(res._fromCache).should.be.false;
+  it('should return lean models from cached and non-cached results', async () => {
+    const lean = await getAllLean(10);
+    lean.length.should.equal(10);
 
-      getAllLean(10, (err, res2) => {
-        res2.length.should.equal(10);
-        Boolean(res2._fromCache).should.be.true;
-        res[0].constructor.name.should.not.equal('model');
-        res2[0].constructor.name.should.not.equal('model');
-        done();
-      });
-    });
+    await generate(10);
+
+    const cachedLean = await getAllLean(10);
+    cachedLean.length.should.equal(10);
+
+    lean[0].constructor.name.should.not.equal('model');
+    cachedLean[0].constructor.name.should.not.equal('model');
   });
 
-  it('should cache a query that returns no results', (done) => {
-    getNone(10, (err, res) => {
-      res.length.should.equal(0);
-      Boolean(res._fromCache).should.be.false;
+  it('should cache a query that returns no results', async () => {
+    const empty = await getNone(60);
+    empty.length.should.equal(0);
 
-      getNone(10, (err, res2) => {
-        res2.length.should.equal(0);
-        Boolean(res2._fromCache).should.be.true;
-        done();
-      });
-    });
+    await generate(10);
+
+    const cachedEmpty = await getNone(60);
+    cachedEmpty.length.should.equal(0);
   });
 
-  it('should distinguish between lean and non lean for the same conditions', (done) => {
-    getAll(10, (err, res) => {
-      getAll(10, (err, res2) => {
-        res2.length.should.equal(10);
-        Boolean(res2._fromCache).should.be.true;
-        res2[0].constructor.name.should.equal('model');
+  it('should distinguish between lean and non lean for the same conditions', async () => {
+    const res = await getAll(60);
+    res.length.should.equal(10);
 
-        getAllLean((err, res3) => {
-          Boolean(res3._fromCache).should.be.false;
-          res3[0].constructor.name.should.not.equal('model');
-          done();
-        });
-      });
-    });
+    await generate(10);
+
+    const cachedRes = await getAll(60);
+    cachedRes.length.should.equal(10);
+
+    const nonCachedLean = await getAllLean(60);
+    nonCachedLean[0].constructor.name.should.not.equal('model');
   });
 
-  it('should correctly cache queries using skip', (done) => {
-    getWithSkip(1, 10, (err, res) => {
-      Boolean(res._fromCache).should.be.false;
-      res.length.should.equal(9);
+  it('should correctly cache queries using skip', async () => {
+    const res = await getWithSkip(1, 60);
+    res.length.should.equal(9);
 
-      getWithSkip(1, 10, (err, res2) => {
-        Boolean(res2._fromCache).should.be.true;
-        res2.length.should.equal(9);
+    await generate(10);
 
-        getWithSkip(2, 10, (err, res3) => {
-          Boolean(res3._fromCache).should.be.false;
-          res3.length.should.equal(8);
-          done();
-        });
-      });
-    });
+    const cachedRes = await getWithSkip(1, 60);
+    cachedRes.length.should.equal(9);
+
+    const nonCached = await getWithSkip(2, 60);
+    nonCached.length.should.equal(18);
   });
 
-  it('should correctly cache queries using limit', (done) => {
-    getWithLimit(5, 10, (err, res) => {
-      Boolean(res._fromCache).should.be.false;
-      res.length.should.equal(5);
+  it('should correctly cache queries using limit', async () => {
+    const res = await getWithLimit(5, 60);
+    res.length.should.equal(5);
 
-      getWithLimit(5, 10, (err, res2) => {
-        Boolean(res2._fromCache).should.be.true;
-        res2.length.should.equal(5);
+    await Record.remove();
 
-        getWithLimit(4, 10, (err, res3) => {
-          Boolean(res3._fromCache).should.be.false;
-          res3.length.should.equal(4);
-          done();
-        });
-      });
-    });
+    const cached = await getWithLimit(5, 60);
+    cached.length.should.equal(5);
+
+    await generate(10);
+
+    const nonCached = await getWithLimit(4, 60);
+    nonCached.length.should.equal(4);
   });
 
-  it('should correctly cache the same query with different condition orders', (done) => {
-    getWithUnorderedQuery(10, (err, res) => {
-      Boolean(res._fromCache).should.be.false;
-      getWithUnorderedQuery(10, (err, res2) => {
-        Boolean(res2._fromCache).should.be.true;
-        done();
-      });
-    });
+  it('should correctly cache the same query with different condition orders', async () => {
+    const res = await getWithUnorderedQuery(60);
+    res.length.should.equal(10);
+
+    await generate(10);
+
+    const cached = await getWithUnorderedQuery(60);
+    cached.length.should.equal(10);
   });
 
-  it('should cache a findOne query', (done) => {
-    getOne(10, (err, res) => {
-      res.constructor.name.should.equal('model');
+  it('should cache a findOne query', async () => {
+    const one = await getOne(60);
+    Boolean(one).should.be.true;
 
-      getOne(10, (err, res2) => {
-        res2.constructor.name.should.equal('model');
-        Boolean(res2._fromCache).should.be.true;
-        done();
-      });
-    });
+    await Record.remove();
+
+    const cachedOne = await getOne(60);
+    Boolean(cachedOne).should.be.true;
   });
 
-  it('should cache a regex condition properly', (done) => {
-    getAllWithRegex(10, (err, res) => {
-      Boolean(res._fromCache).should.be.false;
+  it('should cache a regex condition properly', async () => {
+    const res = await getAllWithRegex(60);
+    res.length.should.equal(10);
 
-      getAllWithRegex(10, (err, res) => {
-        Boolean(res._fromCache).should.be.true;
+    await generate(10);
 
-        getNoneWithRegex(10, (err, res) => {
-          Boolean(res._fromCache).should.be.false;
-          done();
-        });
-      });
-    });
+    const cached = await getAllWithRegex(60);
+    cached.length.should.equal(10);
+
+    const nonCached = await getNoneWithRegex(60);
+    nonCached.length.should.equal(0);
   });
 
-  it('should cache a query rerun many times', (done) => {
-    getAll(60).then((res) => {
-      res.length.should.equal(10);
-      Boolean(res._fromCache).should.be.false;
+  it('should cache a query rerun many times', async () => {
+    const res = await getAll(60);
+    res.length.should.equal(10);
 
-      async.series(
-        new Array(20).join('.').split('').map(() => {
-          return function(done) {
-            getAll(60, done);
-          };
-        })
-        , () => {
-          getAll(60, (err, res) => {
-            res.length.should.equal(10);
-            Boolean(res._fromCache).should.be.true;
-            done();
-          });
-        });
-    });
+    await generate(10);
+
+    await Promise.all(new Array(20).join('.').split('').map(() => getAll(60)));
+
+    const cached = await getAll(60);
+    cached.length.should.equal(10);
   });
 
   it('should expire the cache', (done) => {
     getAll(1, () => {
       setTimeout(() => {
         getAll(1, (err, res) => {
+          if (err) return done(err);
+
           Boolean(res._fromCache).should.be.false;
           done();
         });
@@ -251,54 +227,56 @@ describe('cachegoose', () => {
     });
   });
 
-  it('should cache aggregate queries', (done) => {
+  it.only('should cache aggregate queries that use callbacks', (done) => {
     aggregate(60, (err, res) => {
-      Boolean(res._fromCache).should.be.false;
-      aggregate(60, (err, res2) => {
-        Boolean(res2._fromCache).should.be.true;
-        done();
-      });
-    });
-  });
+      if (err) return done(err);
 
-  it('should cache aggregate queries that use Promises', (done) => {
-    aggregate(60)
-      .then((res) => {
-        Boolean(res._fromCache).should.be.false;
-      })
-      .then(() => {
-        return aggregate(60);
-      })
-      .then((res) => {
-        Boolean(res._fromCache).should.be.true;
-      })
-      .then(() => done())
-      .catch(done);
-  });
+      res[0].total.should.equal(45);
 
-  it('should clear a custom cache key', (done) => {
-    getAllCustomKey(60, 'custom-key', (err, res) => {
-      Boolean(res._fromCache).should.be.false;
-      getAllCustomKey(60, 'custom-key', (err, res2) => {
-        Boolean(res2._fromCache).should.be.true;
-        cachegoose.clearCache('custom-key');
-        getAllCustomKey(60, 'custom-key', (err, res3) => {
-          Boolean(res3._fromCache).should.be.false;
+      generate(10).then(() => {
+        aggregate(60, (err, cached) => {
+          if (err) return done(err);
+
+          cached[0].total.should.equal(45);
           done();
         });
       });
     });
   });
 
-  it('should cache a `count` query', (done) => {
-    Record.find({}).cache(60).count().exec((err, res) => {
-      Boolean(res._fromCache).should.be.false;
+  it('should cache aggregate queries that use Promises', async () => {
+    const [res] = await aggregate(60);
+    res.total.should.equal(45);
 
-      Record.find({}).cache(60).count().exec((err, res) => {
-        Boolean(res._fromCache).should.be.true;
-        done();
-      });
-    });
+    await generate(10);
+
+    const [cached] = await aggregate(60);
+    cached.total.should.equal(45);
+  });
+
+  it('should clear a custom cache key', async () => {
+    const res = await getAllCustomKey(60, 'custom-key');
+    res.length.should.equal(10);
+
+    await generate(10);
+
+    const cached = await getAllCustomKey(60, 'custom-key');
+    cached.length.should.equal(10);
+
+    cachegoose.clearCache('custom-key');
+
+    const notCached = await getAllCustomKey(60, 'custom-key');
+    notCached.length.should.equal(20);
+  });
+
+  it('should cache a count query', async () => {
+    const res = await count(60);
+    res.should.equal(10);
+
+    await generate(10);
+
+    const cached = await count(60);
+    cached.should.equal(10);
   });
 });
 
@@ -342,14 +320,20 @@ function getNoneWithRegex(ttl, cb) {
   return Record.find({ str: { $regex: /\d\d/ } }).cache(ttl).exec(cb);
 }
 
-let flag = true;
 function getWithUnorderedQuery(ttl, cb) {
-  flag = !flag;
-  if (flag) {
-    return Record.find({ a: true, b: false }).cache(ttl).exec(cb);
+  getWithUnorderedQuery.flag = !getWithUnorderedQuery.flag;
+  if (getWithUnorderedQuery.flag) {
+    return Record.find({ num: { $exists: true }, str: { $exists: true } }).cache(ttl).exec(cb);
   } else {
-    return Record.find({ b: false, a: true }).cache(ttl).exec(cb);
+    return Record.find({ str: { $exists: true }, num: { $exists: true } }).cache(ttl).exec(cb);
   }
+}
+
+function count(ttl, cb) {
+  return Record.find({})
+    .cache(ttl)
+    .count()
+    .exec(cb);
 }
 
 function aggregate(ttl, cb) {
@@ -359,7 +343,7 @@ function aggregate(ttl, cb) {
     .exec(cb);
 }
 
-function generate(amount, cb) {
+function generate(amount) {
   const records = [];
   let count = 0;
   while (count < amount) {
@@ -370,5 +354,5 @@ function generate(amount, cb) {
     count++;
   }
 
-  Record.create(records, cb);
+  return Record.create(records);
 }
