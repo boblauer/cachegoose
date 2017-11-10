@@ -24,8 +24,9 @@
   },
   "scripts": {
     "test": "npm run build && mocha",
+    "lint": "eslint .",
     "build": "babel lib-src --out-dir out",
-    "prepublish": "npm run build"
+    "prepublish": "npm run lint && npm run build"
   },
   "repository": {
     "type": "git",
