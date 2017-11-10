@@ -2,7 +2,7 @@
 
 const generateKey = require('./generate-key');
 
-module.exports = function(mongoose, cache, debug) {
+module.exports = function(mongoose, cache) {
   const exec = mongoose.Query.prototype.exec;
 
   mongoose.Query.prototype.exec = function(op, callback = function() { }) {
@@ -20,14 +20,12 @@ module.exports = function(mongoose, cache, debug) {
     const isCount = this.op === 'count';
     const isLean = this._mongooseOptions.lean;
     const model = this.model.modelName;
-    const Promise = mongoose.Promis;
+    const Promise = mongoose.Promise;
 
     return new Promise.ES6((resolve, reject) => {
       cache.get(key, (err, cachedResults) => { //eslint-disable-line handle-callback-err
         if (cachedResults) {
           if (isCount) {
-            if (debug) cachedResults = { count: cachedResults, _fromCache: true };
-
             callback(null, cachedResults);
             return resolve(cachedResults);
           }
@@ -39,7 +37,6 @@ module.exports = function(mongoose, cache, debug) {
               inflateModel(constructor)(cachedResults);
           }
 
-          if (debug) cachedResults._fromCache = true;
           callback(null, cachedResults);
           return resolve(cachedResults);
         }

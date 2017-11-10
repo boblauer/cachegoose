@@ -3,7 +3,7 @@
 const generateKey = require('./generate-key');
 let hasBeenExtended = false;
 
-module.exports = function(mongoose, cache, debug) {
+module.exports = function(mongoose, cache) {
   const aggregate = mongoose.Model.aggregate;
 
   mongoose.Model.aggregate = function() {
@@ -31,7 +31,6 @@ module.exports = function(mongoose, cache, debug) {
       return new Promise.ES6((resolve, reject) => {
         cache.get(key, (err, cachedResults) => { //eslint-disable-line handle-callback-err
           if (cachedResults) {
-            if (debug) cachedResults._fromCache = true;
             callback(null, cachedResults);
             return resolve(cachedResults);
           }
