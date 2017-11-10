@@ -227,7 +227,7 @@ describe('cachegoose', () => {
     });
   });
 
-  it.only('should cache aggregate queries that use callbacks', (done) => {
+  it('should cache aggregate queries that use callbacks', (done) => {
     aggregate(60, (err, res) => {
       if (err) return done(err);
 
