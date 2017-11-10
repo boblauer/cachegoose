@@ -19,7 +19,7 @@ module.exports = function(mongoose, cache, debug) {
   function extend(Aggregate) {
     let exec = Aggregate.prototype.exec;
 
-    Aggregate.prototype.exec = function(callback) {
+    Aggregate.prototype.exec = function(callback = function() { }) {
       if (!this.hasOwnProperty('_ttl')) return exec.apply(this, arguments);
 
       let key     = this._key || this.getCacheKey()
