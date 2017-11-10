@@ -1,7 +1,9 @@
-let generateKey = require('./generate-key');
+'use strict';
+
+const generateKey = require('./generate-key');
 
 module.exports = function(mongoose, cache, debug) {
-  let exec = mongoose.Query.prototype.exec;
+  const exec = mongoose.Query.prototype.exec;
 
   mongoose.Query.prototype.exec = function(op, callback = function() { }) {
     if (!this.hasOwnProperty('_ttl')) return exec.apply(this, arguments);
@@ -13,16 +15,15 @@ module.exports = function(mongoose, cache, debug) {
       this.op = op;
     }
 
-    let key     = this._key || this.getCacheKey()
-      , ttl     = this._ttl
-      , isCount = this.op === 'count'
-      , isLean  = this._mongooseOptions.lean
-      , model   = this.model.modelName
-      , Promise = mongoose.Promise
-      ;
+    const key = this._key || this.getCacheKey();
+    const ttl = this._ttl;
+    const isCount = this.op === 'count';
+    const isLean = this._mongooseOptions.lean;
+    const model = this.model.modelName;
+    const Promise = mongoose.Promis;
 
     return new Promise.ES6((resolve, reject) => {
-      cache.get(key, (err, cachedResults) => {
+      cache.get(key, (err, cachedResults) => { //eslint-disable-line handle-callback-err
         if (cachedResults) {
           if (isCount) {
             if (debug) cachedResults = { count: cachedResults, _fromCache: true };
@@ -32,7 +33,7 @@ module.exports = function(mongoose, cache, debug) {
           }
 
           if (!isLean) {
-            let constructor = mongoose.model(model);
+            const constructor = mongoose.model(model);
             cachedResults = Array.isArray(cachedResults) ?
               cachedResults.map(inflateModel(constructor)) :
               inflateModel(constructor)(cachedResults);
@@ -45,13 +46,13 @@ module.exports = function(mongoose, cache, debug) {
 
         exec
           .call(this)
-          .then(results => {
+          .then((results) => {
             cache.set(key, results, ttl, () => {
               callback(null, results);
               return resolve(results);
-            })
+            });
           })
-          .catch(err => {
+          .catch((err) => {
             callback(err);
             reject(err);
           });
@@ -71,7 +72,7 @@ module.exports = function(mongoose, cache, debug) {
   };
 
   mongoose.Query.prototype.getCacheKey = function() {
-    let key = {
+    const key = {
       model: this.model.modelName,
       op: this.op,
       skip: this.options.skip,
@@ -92,7 +93,7 @@ function inflateModel(constructor) {
     if (constructor.inflate) {
       return constructor.inflate(data);
     } else {
-      let model = constructor(data);
+      const model = constructor(data);
       model.$__reset();
       model.isNew = false;
       return model;

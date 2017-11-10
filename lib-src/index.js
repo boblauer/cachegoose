@@ -1,6 +1,7 @@
-let hasRun = false
-  , cache
-  ;
+'use strict';
+
+let hasRun = false;
+let cache;
 
 module.exports = function init(mongoose, cacheOptions, debug) {
   if (mongoose.version < '3.7') throw new Error('Cachegoose is only compatible with mongoose 3.7+');
@@ -13,7 +14,7 @@ module.exports = function init(mongoose, cacheOptions, debug) {
   require('./extend-aggregate')(mongoose, cache, debug);
 };
 
-module.exports.clearCache = function(customKey, cb = function() { }) {
+module.exports.clearCache = function(customKey, cb = () => { }) {
   if (!customKey) return cb();
   cache.del(customKey, cb);
 };

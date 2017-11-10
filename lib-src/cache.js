@@ -1,6 +1,7 @@
-let Cacheman = require('cacheman')
-  , noop     = function() { }
-  ;
+'use strict';
+
+const Cacheman = require('cacheman');
+const noop = () => {};
 
 function Cache(options) {
   this._cache = new Cacheman('cachegoose-cache', options);
