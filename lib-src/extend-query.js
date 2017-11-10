@@ -15,6 +15,7 @@ module.exports = function(mongoose, cache, debug) {
 
     let key     = this._key || this.getCacheKey()
       , ttl     = this._ttl
+      , isCount = this.op === 'count'
       , isLean  = this._mongooseOptions.lean
       , model   = this.model.modelName
       , Promise = mongoose.Promise
@@ -23,6 +24,13 @@ module.exports = function(mongoose, cache, debug) {
     return new Promise.ES6((resolve, reject) => {
       cache.get(key, (err, cachedResults) => {
         if (cachedResults) {
+          if (isCount) {
+            if (debug) cachedResults = { count: cachedResults, _fromCache: true };
+
+            callback(null, cachedResults);
+            return resolve(cachedResults);
+          }
+
           if (!isLean) {
             let constructor = mongoose.model(model);
             cachedResults = Array.isArray(cachedResults) ?

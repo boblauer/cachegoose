@@ -275,6 +275,17 @@ describe('cachegoose', function() {
       });
     });
   });
+
+  it('should cache a `count` query', function(done) {
+    Record.find({}).cache(60).count().exec(function(err, res) {
+      Boolean(res._fromCache).should.be.false;
+
+      Record.find({}).cache(60).count().exec(function(err, res) {
+        Boolean(res._fromCache).should.be.true;
+        done();
+      });
+    });
+  });
 });
 
 function getAll(ttl, cb) {
