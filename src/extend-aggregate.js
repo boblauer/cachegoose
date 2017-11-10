@@ -1,12 +1,13 @@
-let generateKey     = require('./generate-key')
-  , hasBeenExtended = false
-  ;
+'use strict';
 
-module.exports = function(mongoose, cache, debug) {
-  let aggregate = mongoose.Model.aggregate;
+const generateKey = require('./generate-key');
+let hasBeenExtended = false;
+
+module.exports = function(mongoose, cache) {
+  const aggregate = mongoose.Model.aggregate;
 
   mongoose.Model.aggregate = function() {
-    let res = aggregate.apply(this, arguments);
+    const res = aggregate.apply(this, arguments);
 
     if (!hasBeenExtended && res.constructor && res.constructor.name === 'Aggregate') {
       extend(res.constructor);
@@ -17,42 +18,37 @@ module.exports = function(mongoose, cache, debug) {
   };
 
   function extend(Aggregate) {
-    let exec = Aggregate.prototype.exec;
+    const exec = Aggregate.prototype.exec;
 
     Aggregate.prototype.exec = function(callback = function() { }) {
       if (!this.hasOwnProperty('_ttl')) return exec.apply(this, arguments);
 
-      let key     = this._key || this.getCacheKey()
-        , ttl     = this._ttl
-        , Promise = mongoose.Promise
-        ;
+      const key = this._key || this.getCacheKey();
+      const ttl = this._ttl;
+      const Promise = mongoose.Promise;
+      ;
 
       return new Promise.ES6((resolve, reject) => {
-        cache.get(key, (err, cachedResults) => {
+        cache.get(key, (err, cachedResults) => { //eslint-disable-line handle-callback-err
           if (cachedResults) {
-            if (debug) cachedResults._fromCache = true;
             callback(null, cachedResults);
             return resolve(cachedResults);
           }
 
           exec
             .call(this)
-            .then(results => {
+            .then((results) => {
               cache.set(key, results, ttl, () => {
                 callback(null, results);
                 resolve(results);
               });
             })
-            .catch(err => {
+            .catch((err) => {
               callback(err);
               reject(err);
             });
         });
       });
-
-      promise.onResolve(callback);
-
-      return promise;
     };
 
     Aggregate.prototype.cache = function(ttl = 60, customKey = '') {

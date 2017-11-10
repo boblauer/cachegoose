@@ -1,1 +1,3 @@
-module.exports = require('./lib');
+'use strict';
+
+module.exports = require('./out');
