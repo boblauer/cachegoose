@@ -74,6 +74,7 @@ module.exports = function(mongoose, cache) {
       op: this.op,
       skip: this.options.skip,
       limit: this.options.limit,
+      sort: this.options.sort,
       _options: this._mongooseOptions,
       _conditions: this._conditions,
       _fields: this._fields,

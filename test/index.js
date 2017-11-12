@@ -278,6 +278,19 @@ describe('cachegoose', () => {
     const cached = await count(60);
     cached.should.equal(10);
   });
+
+  it('should correctly cache a query with a sort order', async () => {
+    const res = await getAllSorted({ num: 1 });
+    res.length.should.equal(10);
+
+    await generate(10);
+
+    const cached = await getAllSorted({ num: 1 });
+    cached.length.should.equal(10);
+
+    const diffSort = await getAllSorted({ num: -1 });
+    diffSort.length.should.equal(20);
+  });
 });
 
 function getAll(ttl, cb) {
@@ -327,6 +340,10 @@ function getWithUnorderedQuery(ttl, cb) {
   } else {
     return Record.find({ str: { $exists: true }, num: { $exists: true } }).cache(ttl).exec(cb);
   }
+}
+
+function getAllSorted(sortObj) {
+  return Record.find({}).sort(sortObj).cache(60).exec();
 }
 
 function count(ttl, cb) {
