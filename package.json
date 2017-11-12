@@ -1,6 +1,6 @@
 {
   "name": "cachegoose",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Mongoose caching that actually works.",
   "main": "index.js",
   "directories": {
