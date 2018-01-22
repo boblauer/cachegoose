@@ -7,24 +7,24 @@
     "test": "test"
   },
   "dependencies": {
-    "cacheman": "^2.0.5",
-    "cacheman-redis": "^1.0.1",
+    "cacheman": "^2.2.1",
+    "cacheman-redis": "^1.1.2",
     "jsosort": "0.0.0",
-    "sha1": "^1.1.0"
+    "sha1": "^1.1.1"
   },
   "peerDependencies": {
-    "mongoose": "^4.5.7"
+    "mongoose": "^5.0.1"
   },
   "devDependencies": {
-    "babel": "^5.0.12",
-    "eslint": "^4.10.0",
+    "babel-cli": "^6.26.0",
+    "eslint": "^4.16.0",
     "eslint-plugin-mocha": "^4.11.0",
-    "mocha": "~1.21.5",
-    "mongoose": "^4.5.7",
-    "should": "~4.0.4"
+    "mocha": "^5.0.0",
+    "mongoose": "^5.0.1",
+    "should": "^13.2.1"
   },
   "scripts": {
-    "test": "npm run build && mocha",
+    "test": "npm run build && mocha --exit",
     "lint": "eslint .",
     "build": "babel src --out-dir out",
     "prepublish": "npm run lint && npm run build"

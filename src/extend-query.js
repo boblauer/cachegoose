@@ -20,9 +20,8 @@ module.exports = function(mongoose, cache) {
     const isCount = this.op === 'count';
     const isLean = this._mongooseOptions.lean;
     const model = this.model.modelName;
-    const Promise = mongoose.Promise;
 
-    return new Promise.ES6((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       cache.get(key, (err, cachedResults) => { //eslint-disable-line handle-callback-err
         if (cachedResults) {
           if (isCount) {
