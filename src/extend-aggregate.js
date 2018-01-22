@@ -25,10 +25,8 @@ module.exports = function(mongoose, cache) {
 
       const key = this._key || this.getCacheKey();
       const ttl = this._ttl;
-      const Promise = mongoose.Promise;
-      ;
 
-      return new Promise.ES6((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         cache.get(key, (err, cachedResults) => { //eslint-disable-line handle-callback-err
           if (cachedResults) {
             callback(null, cachedResults);
