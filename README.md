@@ -8,6 +8,12 @@
 
 A Mongoose caching module that works exactly how you would expect it to, with the latest version of Mongoose.
 
+```
+Important:
+
+If you are using Mongoose 4.x or below, you need to use version 4.1 of this library.
+```
+
 ## Usage ##
 
 ```javascript
