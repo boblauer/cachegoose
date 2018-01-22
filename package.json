@@ -24,7 +24,7 @@
     "should": "^13.2.1"
   },
   "scripts": {
-    "test": "npm run build && mocha",
+    "test": "npm run build && mocha --exit",
     "lint": "eslint .",
     "build": "babel src --out-dir out",
     "prepublish": "npm run lint && npm run build"
