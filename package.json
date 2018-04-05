@@ -9,6 +9,7 @@
   "dependencies": {
     "cacheman": "^2.2.1",
     "cacheman-redis": "^1.1.2",
+    "compare-versions": "^3.1.0",
     "jsosort": "0.0.0",
     "sha1": "^1.1.1"
   },
