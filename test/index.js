@@ -3,6 +3,7 @@
 require('should');
 
 const mongoose = require('mongoose');
+const sinon = require('sinon');
 const cachegoose = require('../out');
 const Schema = mongoose.Schema;
 
@@ -277,6 +278,15 @@ describe('cachegoose', () => {
 
     const cached = await count(60);
     cached.should.equal(10);
+  });
+
+  it('should cache a count query with zero result', async () => {
+    const spy = sinon.spy(cache, 'set');
+    await Record.remove();
+    const res = await count(60);
+    res.should.equal(0);
+    await count(60);
+    sinon.assert.calledOnce(spy);
   });
 
   it('should correctly cache a query with a sort order', async () => {
