@@ -1,12 +1,11 @@
 'use strict';
 
-const compareVersions = require('compare-versions');
+const mongoose = require('mongoose');
 
 let hasRun = false;
 let cache;
 
-module.exports = function init(mongoose, cacheOptions = {}) {
-  if (compareVersions(mongoose.version, '3.7') === -1) throw new Error('Cachegoose is only compatible with mongoose 3.7+');
+module.exports = function init(cacheOptions = {}) {
   if (hasRun) return;
   hasRun = true;
 

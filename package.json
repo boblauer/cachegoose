@@ -10,12 +10,11 @@
     "brace-expansion": "^1.1.8",
     "cacheman": "^2.2.1",
     "cacheman-redis": "^1.1.2",
-    "compare-versions": "^3.1.0",
     "jsosort": "0.0.0",
     "sha1": "^1.1.1"
   },
   "peerDependencies": {
-    "mongoose": "^5.0.1"
+    "mongoose": ">=3.7"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
