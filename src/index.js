@@ -17,6 +17,9 @@ module.exports = function init(mongoose, cacheOptions = {}) {
 };
 
 module.exports.clearCache = function(customKey, cb = () => { }) {
-  if (!customKey) return cb();
+  if (!customKey) {
+    cache.clear(cb);
+    return;
+  }
   cache.del(customKey, cb);
 };

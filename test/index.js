@@ -8,14 +8,11 @@ const Schema = mongoose.Schema;
 
 let RecordSchema;
 let Record;
-let cache;
 let db;
 
 describe('cachegoose', () => {
   before((done) => {
     cachegoose(mongoose);
-
-    cache = cachegoose._cache;
 
     mongoose.connect('mongodb://127.0.0.1/mongoose-cachegoose-testing');
     db = mongoose.connection;
@@ -41,7 +38,7 @@ describe('cachegoose', () => {
 
   afterEach((done) => {
     Record.remove(() => {
-      cache.clear(done);
+      cachegoose.clearCache(null, done);
     });
   });
 
