@@ -71,6 +71,25 @@ ChildrenSchema.post('save', function(child) {
 
 Insert `.cache()` into the queries you want to cache, and they will be cached.  Works with `select`, `lean`, `sort`, and anything else that will modify the results of a query.
 
+## Clearing the cache ##
+
+If you want to clear the cache for a specific query, you must specify the cache key yourself:
+
+```js
+function getChildrenByParentId(parentId, cb) {
+  Children
+    .find({ parentId })
+    .cache(0, `${parentId}_children`)
+    .exec(cb);
+}
+
+function clearChildrenByParentIdCache(parentId, cb) {
+  cachegoose.clearCache(`${parentId}_children`, cb);
+}
+```
+
+If you call `cachegoose.clearCache(null, cb)` without passing a cache key as the first parameter, the entire cache will be cleared for all queries.
+
 ## Caching populated documents ##
 
 When a document is returned from the cache, cachegoose will [hydrate](http://mongoosejs.com/docs/api.html#model_Model.hydrate) it, which initializes it's virtuals/methods. Hydrating a populated document will discard any populated fields (see [Automattic/mongoose#4727](https://github.com/Automattic/mongoose/issues/4727)). To cache populated documents without losing child documents, you must use `.lean()`, however if you do this you will not be able to use any virtuals/methods (it will be a plain object).
