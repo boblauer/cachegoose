@@ -17,6 +17,15 @@ module.exports = function(mongoose, cache) {
     return res;
   };
 
+  // add helper function refs to model
+  mongoose.Model.clearCache = function (customKey, cb = () => {}) {
+    if (!customKey) {
+      cache._cache.clear(cb);
+      return;
+    }
+    cache._cache.del(customKey, cb);
+  };
+
   function extend(Aggregate) {
     const exec = Aggregate.prototype.exec;
 
