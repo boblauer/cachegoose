@@ -18,7 +18,7 @@ module.exports = function(mongoose, cache) {
   };
 
   // add helper function refs to model
-  mongoose.Model.clearCache = function (customKey, cb = () => {}) {
+  mongoose.Model.clearCache = function(customKey, cb = () => {}) {
     if (!customKey) {
       cache._cache.clear(cb);
       return;
