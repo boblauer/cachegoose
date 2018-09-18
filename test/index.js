@@ -295,6 +295,48 @@ describe('cachegoose', () => {
 
     cached.should.equal(0);
   });
+  it('should cache a countDocuments query', async () => {
+    const res = await countDocuments(60);
+    res.should.equal(10);
+
+    await generate(10);
+
+    const cached = await countDocuments(60);
+    cached.should.equal(10);
+  });
+
+  it('should cache a countDocuments query with zero results', async () => {
+    await Record.remove();
+
+    const res = await countDocuments(60);
+    res.should.equal(0);
+
+    await generate(2);
+    const cached = await countDocuments(60);
+
+    cached.should.equal(0);
+  });
+  it('should cache a estimatedDocumentCount query', async () => {
+    const res = await estimatedDocumentCount(60);
+    res.should.equal(10);
+
+    await generate(10);
+
+    const cached = await estimatedDocumentCount(60);
+    cached.should.equal(10);
+  });
+
+  it('should cache a estimatedDocumentCount query with zero results', async () => {
+    await Record.remove();
+
+    const res = await estimatedDocumentCount(60);
+    res.should.equal(0);
+
+    await generate(2);
+    const cached = await estimatedDocumentCount(60);
+
+    cached.should.equal(0);
+  });
 
   it('should correctly cache a query with a sort order', async () => {
     const res = await getAllSorted({ num: 1 });
@@ -367,6 +409,18 @@ function count(ttl, cb) {
   return Record.find({})
     .cache(ttl)
     .count()
+    .exec(cb);
+}
+function countDocuments(ttl, cb) {
+  return Record.find({})
+    .cache(ttl)
+    .countDocuments()
+    .exec(cb);
+}
+function estimatedDocumentCount(ttl, cb) {
+  return Record.find({})
+    .cache(ttl)
+    .estimatedDocumentCount()
     .exec(cb);
 }
 
