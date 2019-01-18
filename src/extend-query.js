@@ -32,8 +32,8 @@ module.exports = function(mongoose, cache) {
           if (!isLean) {
             const constructor = mongoose.model(model);
             cachedResults = Array.isArray(cachedResults) ?
-              cachedResults.map(inflateModel(constructor)) :
-              inflateModel(constructor)(cachedResults);
+              cachedResults.map(hydrateModel(constructor)) :
+              hydrateModel(constructor)(cachedResults);
           }
 
           callback(null, cachedResults);
@@ -85,15 +85,8 @@ module.exports = function(mongoose, cache) {
   };
 };
 
-function inflateModel(constructor) {
+function hydrateModel(constructor) {
   return (data) => {
-    if (constructor.inflate) {
-      return constructor.inflate(data);
-    } else {
-      const model = constructor(data);
-      model.$__reset();
-      model.isNew = false;
-      return model;
-    }
+    return constructor.hydrate(data);
   };
 }
