@@ -42,12 +42,13 @@ describe('cachegoose', () => {
     });
   });
 
-  it('should throw an error if the mongoose version is less than 3.7', () => {
-    (() => cachegoose({ version: '3.6' })).should.throw();
+  it('should throw an error if the hydrate method exists', () => {
+    const mongoose = { Model: { hydrate: undefined } };
+    (() => cachegoose(mongoose)).should.throw();
   });
 
-  it('should not an error if the mongoose version is greater than 3.7', () => {
-    (() => cachegoose({ version: '3.10' })).should.not.throw();
+  it('should not an error if the hydrage method exists', () => {
+    (() => cachegoose(mongoose)).should.not.throw();
   });
 
   it('should have cache method after initialization', () => {
