@@ -3,6 +3,7 @@
   "version": "8.0.0",
   "description": "Mongoose caching that actually works.",
   "main": "index.js",
+  "types": "index.d.ts",
   "directories": {
     "test": "test"
   },
