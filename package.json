@@ -42,6 +42,7 @@
     "mongoose",
     "redis",
     "store",
+    "typescript",
     "ttl"
   ],
   "author": "Bob Lauer <rlauer@gmail.com>",
