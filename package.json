@@ -1,6 +1,6 @@
 {
   "name": "cachegoose",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Mongoose caching that actually works.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -45,6 +45,13 @@
     "ttl"
   ],
   "author": "Bob Lauer <rlauer@gmail.com>",
+  "contributors": [
+    {
+      "name": "Ilya Maslennikov",
+      "url": "https://xrip.ru",
+      "githubUsername": "xrip"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/boblauer/cachegoose/issues"
