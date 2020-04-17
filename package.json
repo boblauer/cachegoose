@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/boblauer/cachegoose.git"
+    "url": "https://github.com/xrip/cachegoose.git"
   },
   "keywords": [
     "cache",
