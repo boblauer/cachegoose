@@ -14,6 +14,12 @@ Important:
 If you are using Mongoose 4.x or below, you need to use version 4.1 of this library.
 ```
 
+## Installation ##
+
+```bash
+yarn add https://github.com/xrip/cachegoose 
+```
+
 ## Usage ##
 
 ```javascript
