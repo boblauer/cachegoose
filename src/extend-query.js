@@ -69,6 +69,7 @@ module.exports = function(mongoose, cache) {
 
   mongoose.Query.prototype.getCacheKey = function() {
     const key = {
+      database: this.db.name,
       model: this.model.modelName,
       op: this.op,
       skip: this.options.skip,
