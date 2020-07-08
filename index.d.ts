@@ -10,6 +10,8 @@ declare module 'cachegoose' {
 				engine?: string
 				port?: number
 				host?: string
+				password?: string,
+				client?: any,
 			}
 		}
 
