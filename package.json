@@ -1,9 +1,10 @@
 {
-  "name": "cachegoose",
+  "name": "@xrip/cachegoose",
   "version": "8.0.3",
-  "description": "Mongoose caching that actually works.",
+  "description": "Mongoose caching that actually works. Typescript ready",
   "main": "index.js",
   "types": "index.d.ts",
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
   "directories": {
     "test": "test"
   },
