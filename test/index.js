@@ -367,6 +367,14 @@ describe('cachegoose', () => {
     const cachedConstructor = cachedRes._id.constructor.name.should;
     originalConstructor.should.deepEqual(cachedConstructor);
   });
+
+  it('should return similar _id in cached array result for aggregate', async () => {
+    const originalRes = await aggregateAll(60);
+    const cachedRes = await aggregateAll(60);
+    const originalConstructor = originalRes[0]._id.constructor.name.should;
+    const cachedConstructor = cachedRes[0]._id.constructor.name.should;
+    originalConstructor.should.deepEqual(cachedConstructor);
+  });
 });
 
 function getAll(ttl, cb) {
@@ -448,6 +456,14 @@ function estimatedDocumentCount(ttl, cb) {
 function aggregate(ttl, cb) {
   return Record.aggregate()
     .group({ _id: null, total: { $sum: '$num' } })
+    .cache(ttl)
+    .exec(cb);
+}
+
+function aggregateAll(ttl, cb) {
+  return Record.aggregate([
+    { $match: {}},
+  ])
     .cache(ttl)
     .exec(cb);
 }
