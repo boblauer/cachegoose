@@ -351,6 +351,22 @@ describe('cachegoose', () => {
     const diffSort = await getAllSorted({ num: -1 });
     diffSort.length.should.equal(20);
   });
+
+  it('should return similar _id in cached array result for lean', async () => {
+    const originalRes = await getAllLean(60);
+    const cachedRes = await getAllLean(60);
+    const originalConstructor = originalRes[0]._id.constructor.name.should;
+    const cachedConstructor = cachedRes[0]._id.constructor.name.should;
+    originalConstructor.should.deepEqual(cachedConstructor);
+  });
+
+  it('should return similar _id in one cached result for lean', async () => {
+    const originalRes = await getOneLean(60);
+    const cachedRes = await getOneLean(60);
+    const originalConstructor = originalRes._id.constructor.name.should;
+    const cachedConstructor = cachedRes._id.constructor.name.should;
+    originalConstructor.should.deepEqual(cachedConstructor);
+  });
 });
 
 function getAll(ttl, cb) {
@@ -371,6 +387,10 @@ function getAllLean(ttl, cb) {
 
 function getOne(ttl, cb) {
   return Record.findOne({ num: { $gt: 2 } }).cache(ttl).exec(cb);
+}
+
+function getOneLean(ttl, cb) {
+  return Record.findOne({ num: { $gt: 2 } }).lean().cache(ttl).exec(cb);
 }
 
 function getWithSkip(skip, ttl, cb) {
