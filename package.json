@@ -27,8 +27,8 @@
   },
   "scripts": {
     "test": "npm run build && mocha --exit",
-    "lint": "eslint .",
-    "build": "babel src --out-dir out",
+    "lint": "npx eslint .",
+    "build": "npx babel src --out-dir out",
     "prepublish": "npm run lint && npm run build"
   },
   "repository": {
