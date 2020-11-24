@@ -1,6 +1,6 @@
 # cachegoose #
 
-#### Mongoose caching that actually works.Now with typescript support ####
+#### Mongoose caching that actually works ####
 
 [![Build Status](https://travis-ci.org/boblauer/cachegoose.svg)](https://travis-ci.org/boblauer/cachegoose)
 
@@ -12,12 +12,6 @@ A Mongoose caching module that works exactly how you would expect it to, with th
 Important:
 
 If you are using Mongoose 4.x or below, you need to use version 4.1 of this library.
-```
-
-## Installation ##
-
-```bash
-yarn add https://github.com/xrip/cachegoose 
 ```
 
 ## Usage ##
