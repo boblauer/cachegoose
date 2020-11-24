@@ -27,13 +27,13 @@
   },
   "scripts": {
     "test": "npm run build && mocha --exit",
-    "lint": "npx eslint .",
-    "build": "npx babel src --out-dir out",
+    "lint": "eslint .",
+    "build": "babel src --out-dir out",
     "prepublish": "npm run lint && npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xrip/cachegoose.git"
+    "url": "https://github.com/boblauer/cachegoose.git"
   },
   "keywords": [
     "cache",
@@ -51,7 +51,12 @@
       "name": "Ilya Maslennikov",
       "url": "https://xrip.ru",
       "githubUsername": "xrip"
-    }
+    },
+     {
+      "name": "Martin Donadieu",
+      "url": "https://github.com/riderx",
+      "githubUsername": "riderx"
+    },   
   ],
   "license": "MIT",
   "bugs": {
