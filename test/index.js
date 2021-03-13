@@ -80,7 +80,7 @@ describe('cachegoose', () => {
     cachedRes.length.should.equal(10);
   });
 
-  it('should not cache the same query w/out a ttl defined', async () => {
+  it('should not cache the same query w/out a cachegoose invoking', async () => {
     const res = await getAll(60);
     res.length.should.equal(10);
 
@@ -88,6 +88,24 @@ describe('cachegoose', () => {
 
     const nonCachedResponse = await getAllNoCache();
     nonCachedResponse.length.should.equal(20);
+  });
+
+  it('should not cache query w/out a ttl defined', async () => {
+    const res = await getAll(null);
+    res.length.should.equal(10);
+
+    await generate(10);
+    const cachedRes = await getAll(null);
+    cachedRes.length.should.equal(20);
+  });
+
+  it('should clear cache w/out a ttl defined', async () => {
+    const res = await getAll(60);
+    res.length.should.equal(10);
+
+    await generate(10);
+    const cachedRes = await getAll(null);
+    cachedRes.length.should.equal(20);
   });
 
   it('should return a Mongoose model from cached and non-cached results', (done) => {

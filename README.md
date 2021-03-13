@@ -40,6 +40,13 @@ Record
   .exec(function(err, aggResults) {
     ...
   });
+
+Record
+  .find({})
+  .cache(null) // Explicitly passing in null will not cache the results.
+  .exec(function(err, records) {
+    ...
+  });
 ```
 
 You can also pass a custom key into the `.cache()` method, which you can then use later to clear the cached content.
