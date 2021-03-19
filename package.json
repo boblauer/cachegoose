@@ -1,8 +1,10 @@
 {
-  "name": "cachegoose",
-  "version": "8.0.0",
-  "description": "Mongoose caching that actually works.",
+  "name": "@xrip/cachegoose",
+  "version": "8.0.3",
+  "description": "Mongoose caching that actually works. Typescript ready",
   "main": "index.js",
+  "types": "index.d.ts",
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
   "directories": {
     "test": "test"
   },
@@ -32,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/boblauer/cachegoose.git"
+    "url": "https://github.com/xrip/cachegoose.git"
   },
   "keywords": [
     "cache",
@@ -41,9 +43,17 @@
     "mongoose",
     "redis",
     "store",
+    "typescript",
     "ttl"
   ],
   "author": "Bob Lauer <rlauer@gmail.com>",
+  "contributors": [
+    {
+      "name": "Ilya Maslennikov",
+      "url": "https://xrip.ru",
+      "githubUsername": "xrip"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/boblauer/cachegoose/issues"

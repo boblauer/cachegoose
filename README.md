@@ -6,7 +6,7 @@ If you would like to take over maintaining this project, please open an issue. T
 
 # cachegoose #
 
-#### Mongoose caching that actually works. ####
+#### Mongoose caching that actually works.Now with typescript support ####
 
 [![Build Status](https://travis-ci.org/boblauer/cachegoose.svg)](https://travis-ci.org/boblauer/cachegoose)
 
@@ -21,6 +21,18 @@ If you are using Mongoose 4.x or below, you need to use version 4.0.1 of this li
 
 his is due to Mongoose 5.x no longer having a custom Promise solution(which previous
 version of this library relied upon). - https://github.com/Automattic/mongoose/issues/2917
+```
+
+## Installation Yarn ##
+
+```bash
+yarn add xrip/cachegoose
+```
+
+## Installation Npm ##
+
+```bash
+npm install @xrip/cachegoose
 ```
 
 ## Usage ##

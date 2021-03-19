@@ -29,7 +29,7 @@ module.exports = function(mongoose, cache) {
             return resolve(cachedResults);
           }
 
-          if (!isLean) {
+          if (!isLean && !this._distinct) {
             const constructor = mongoose.model(model);
             cachedResults = Array.isArray(cachedResults) ?
               cachedResults.map(hydrateModel(constructor)) :
@@ -70,6 +70,7 @@ module.exports = function(mongoose, cache) {
   mongoose.Query.prototype.getCacheKey = function() {
     const key = {
       model: this.model.modelName,
+      database: this.model.db.name,
       op: this.op,
       skip: this.options.skip,
       limit: this.options.limit,
