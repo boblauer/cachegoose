@@ -1,6 +1,7 @@
 'use strict';
 
 const generateKey = require('./generate-key');
+const recoverObjectId = require('./recover-objectid');
 
 module.exports = function(mongoose, cache) {
   const exec = mongoose.Query.prototype.exec;
@@ -34,6 +35,8 @@ module.exports = function(mongoose, cache) {
             cachedResults = Array.isArray(cachedResults) ?
               cachedResults.map(hydrateModel(constructor)) :
               hydrateModel(constructor)(cachedResults);
+          } else {
+            cachedResults = recoverObjectId(mongoose, cachedResults);
           }
 
           callback(null, cachedResults);
