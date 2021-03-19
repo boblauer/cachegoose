@@ -29,7 +29,7 @@ module.exports = function(mongoose, cache) {
             return resolve(cachedResults);
           }
 
-          if (!isLean) {
+          if (!isLean && !this._distinct) {
             const constructor = mongoose.model(model);
             cachedResults = Array.isArray(cachedResults) ?
               cachedResults.map(hydrateModel(constructor)) :
