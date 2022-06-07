@@ -19,7 +19,7 @@ Important:
 
 If you are using Mongoose 4.x or below, you need to use version 4.0.1 of this library. 
 
-his is due to Mongoose 5.x no longer having a custom Promise solution(which previous
+This is due to Mongoose 5.x no longer having a custom Promise solution(which previous
 version of this library relied upon). - https://github.com/Automattic/mongoose/issues/2917
 ```
 
